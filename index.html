@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)https://weathermajor.w3spaces.com/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherMajor</title>
+    <link rel="icon" type="image/png" href="https://weathermajor.w3spaces.com/icon.png">
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        .taskbar { display: flex; align-items: center; background: #222; color: white; padding: 10px; }
+        .tabs-container { flex-grow: 1; overflow-x: auto; white-space: nowrap; }
+        .tabs { display: flex; flex-direction: row; }
+        .tab { padding: 5px 10px; margin-right: 5px; cursor: pointer; background: #444; border-radius: 5px; display: inline-block; }
+        .tab.active { background: #666; }
+        .add-tab { cursor: pointer; background: green; color: white; padding: 5px 10px; border-radius: 5px; }
+        .container { display: flex; flex-grow: 1; overflow-x: auto; position: relative; white-space: nowrap; }
+        .iframe-container { border: none; display: none; width: 100vw; height: 100vh; position: absolute; }
+        .close-tab { margin-left: 5px; cursor: pointer; color: red; }
+        .footer { text-align: center; padding: 10px; background: #222; color: white; }
+        .main-content { display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; }
+        .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
+    </style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1223.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1223.0">
+
+    <div class="taskbar">
+        <div class="tabs-container">
+            <div class="tabs" id="tabs">
+                <div class="tab active" id="main-tab" onclick="switchTab(&#39;main-tab&#39;)">Main</div>
+            </div>
+        </div>
+        <button class="add-tab" onclick="addNewTab()">+</button>
+    </div>
+
+    <!-- Main Content Page -->
+    <div class="main-content" id="mainContent">
+        <iframe src="./WeatherMajor_files/saved_resource.html" title="Weather IM"></iframe>
+        <iframe src="./WeatherMajor_files/saved_resource(1).html" title="Battaglia TWC"></iframe>
+    </div>
+
+    <!-- Container for dynamically created iframes -->
+    <div class="container" id="iframeContainer"></div>
+
+    <div class="footer">UntitledManifoldGuy ©️ All rights Reserved</div>
+
+    <script>
+        let tabCounter = 1;
+        let activeTab = "main-tab";
+
+        const allowedDomains = [
+            "noaa.gov",
+            "weather.gov",
+            "noaaweatherradio.org",
+            "broadcastify.com",
+            "https://weather.gc.ca/canada_e.html"
+        ];
+
+        function addNewTab() {
+            let userUrl = prompt("Enter a URL for this tab:");
+            if (!userUrl) return;
+
+            userUrl = ensureHttps(userUrl);
+
+            // Validate if the URL belongs to a weather-related site
+            if (isValidWeatherSite(userUrl)) {
+                const domain = extractDomain(userUrl);
+                const tabId = `tab-${tabCounter++}`;
+
+                // Create new tab element
+                const tabElement = document.createElement("div");
+                tabElement.className = "tab";
+                tabElement.id = tabId;
+                tabElement.innerHTML = `${domain} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
+                tabElement.onclick = () => switchTab(tabId);
+                
+                document.getElementById("tabs").appendChild(tabElement);
+
+                // Create iframe for the new tab
+                const iframeContainer = document.getElementById("iframeContainer");
+                const iframeElement = document.createElement("iframe");
+                iframeElement.className = "iframe-container";
+                iframeElement.id = `${tabId}-iframe`;
+                iframeElement.src = userUrl;
+                iframeContainer.appendChild(iframeElement);
+
+                // Switch to the new tab
+                switchTab(tabId);
+            } else {
+                alert("Invalid URL. Only weather-related sites like NOAA, Weather.gov, Broadcastify, etc., are allowed.");
+            }
+        }
+
+        function switchTab(tabId) {
+            // Hide main content if switching away from Main tab
+            document.getElementById("mainContent").style.display = tabId === "main-tab" ? "flex" : "none";
+
+            if (activeTab) {
+                document.getElementById(activeTab).classList.remove("active");
+                let activeIframe = document.getElementById(activeTab + "-iframe");
+                if (activeIframe) activeIframe.style.display = "none";
+            }
+
+            activeTab = tabId;
+            document.getElementById(tabId).classList.add("active");
+
+            let iframe = document.getElementById(tabId + "-iframe");
+            if (iframe) iframe.style.display = "block";
+        }
+
+        function closeTab(tabId) {
+            document.getElementById(tabId).remove();
+            const iframe = document.getElementById(tabId + "-iframe");
+            if (iframe) iframe.remove();
+
+            // If last tab is closed, return to the main tab
+            if (document.getElementsByClassName("tab").length === 1) {
+                switchTab("main-tab");
+            }
+        }
+
+        function ensureHttps(url) {
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                // Automatically use https://
+                const httpsUrl = "https://" + url;
+                return httpsUrl;
+            }
+            return url;
+        }
+
+        function extractDomain(url) {
+            let hostname = new URL(url).hostname;
+            return hostname.replace("www.", "");
+        }
+
+        function isValidWeatherSite(url) {
+            // Extract the domain and check if it matches allowed domains
+            const domain = extractDomain(url);
+            return allowedDomains.some(allowedDomain => domain.includes(allowedDomain));
+        }
+    </script>
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
