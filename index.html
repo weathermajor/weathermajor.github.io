@@ -7,69 +7,101 @@
     <link rel="icon" type="image/png" href="icon.png">
     <style>
         body { margin: 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; }
-        .taskbar, .footer { background: #222; color: white; padding: 10px; text-align: center; }
+        .hidden { display: none; }
+        .center { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .form-container { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }
+        .taskbar { display: flex; align-items: center; background: #222; color: white; padding: 10px; }
+        .tabs-container { flex-grow: 1; overflow-x: auto; white-space: nowrap; }
+        .tabs { display: flex; }
+        .tab { padding: 5px 10px; margin-right: 5px; cursor: pointer; background: #444; border-radius: 5px; display: inline-block; }
+        .tab.active { background: #666; }
+        .add-tab { cursor: pointer; background: green; color: white; padding: 5px 10px; border-radius: 5px; }
+        .container { display: flex; flex-grow: 1; overflow-x: auto; position: relative; white-space: nowrap; }
+        .iframe-container { border: none; display: none; width: 100vw; height: 100vh; position: absolute; }
+        .footer { text-align: center; padding: 10px; background: #222; color: white; }
         .main-content { display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; }
         .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
-        .login-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 20px; border-radius: 10px; text-align: center; }
-        input, button { margin: 10px; padding: 10px; width: 80%; }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="login-container" id="loginContainer">
-        <div class="login-box">
+    <div id="authContainer" class="center">
+        <div class="form-container">
             <h2 id="authTitle">Login</h2>
-            <input type="text" id="authInput" placeholder="Username or Email"><br>
-            <input type="email" id="emailInput" class="hidden" placeholder="Email"><br>
-            <button onclick="submitAuth()">Submit</button>
-            <p><a href="#" onclick="toggleAuthMode()" id="toggleAuth">Register</a></p>
+            <div id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Username" required><br>
+                <input type="password" id="loginPassword" placeholder="Password" required><br>
+                <button onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+            </div>
+            <div id="registerForm" class="hidden">
+                <input type="email" id="registerEmail" placeholder="Email" required><br>
+                <input type="text" id="registerUsername" placeholder="Username" required><br>
+                <input type="password" id="registerPassword" placeholder="Password" required><br>
+                <button onclick="register()">Register</button>
+                <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
         </div>
     </div>
-    
-    <div class="taskbar">WeatherMajor</div>
-    <div class="main-content" id="mainContent">
-        <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
-        <iframe src="https://battaglia.ddns.net/twc/" title="WeatherStar4000+"></iframe>
+
+    <div id="mainContent" class="hidden">
+        <div class="taskbar">
+            <div class="tabs-container">
+                <div class="tabs" id="tabs">
+                    <div class="tab active" id="main-tab" onclick="switchTab('main-tab')">Main</div>
+                </div>
+            </div>
+            <button class="add-tab" onclick="addNewTab()">+</button>
+        </div>
+        <div class="main-content">
+            <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
+            <iframe src="https://battaglia.ddns.net/twc/" title="WeatherStar4000+"></iframe>
+        </div>
     </div>
-    <div class="footer">UntitledManifoldGuy ©️ All rights Reserved</div>
-    
+
     <script>
-        let isRegistering = false;
-
-        function toggleAuthMode() {
-            isRegistering = !isRegistering;
-            document.getElementById('authTitle').innerText = isRegistering ? 'Register' : 'Login';
-            document.getElementById('toggleAuth').innerText = isRegistering ? 'Login' : 'Register';
-            document.getElementById('emailInput').classList.toggle('hidden', !isRegistering);
+        function showRegister() {
+            document.getElementById("loginForm").classList.add("hidden");
+            document.getElementById("registerForm").classList.remove("hidden");
+            document.getElementById("authTitle").innerText = "Register";
+        }
+        
+        function showLogin() {
+            document.getElementById("registerForm").classList.add("hidden");
+            document.getElementById("loginForm").classList.remove("hidden");
+            document.getElementById("authTitle").innerText = "Login";
         }
 
-        function submitAuth() {
-            const userInput = document.getElementById('authInput').value;
-            const emailInput = document.getElementById('emailInput').value;
-
-            if (isRegistering && !emailInput) {
-                alert('Please enter an email to register.');
-                return;
+        function login() {
+            let username = document.getElementById("loginUsername").value;
+            let password = document.getElementById("loginPassword").value;
+            if (username && password) {
+                localStorage.setItem("loggedIn", true);
+                document.getElementById("authContainer").classList.add("hidden");
+                document.getElementById("mainContent").classList.remove("hidden");
+            } else {
+                alert("Please enter valid login credentials.");
             }
-
-            if (!userInput) {
-                alert('Please enter a username or email.');
-                return;
-            }
-            
-            localStorage.setItem('loggedIn', 'true');
-            document.getElementById('loginContainer').style.display = 'none';
         }
 
-        window.onload = function() {
-            if (localStorage.getItem('loggedIn') === 'true') {
-                document.getElementById('loginContainer').style.display = 'none';
+        function register() {
+            let email = document.getElementById("registerEmail").value;
+            let username = document.getElementById("registerUsername").value;
+            let password = document.getElementById("registerPassword").value;
+            if (email && username && password) {
+                localStorage.setItem("loggedIn", true);
+                document.getElementById("authContainer").classList.add("hidden");
+                document.getElementById("mainContent").classList.remove("hidden");
+            } else {
+                alert("Please enter valid registration details.");
+            }
+        }
+
+        window.onload = function () {
+            if (localStorage.getItem("loggedIn")) {
+                document.getElementById("authContainer").classList.add("hidden");
+                document.getElementById("mainContent").classList.remove("hidden");
             }
         }
     </script>
 </body>
 </html>
-
-
-
