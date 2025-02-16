@@ -4,108 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherMajor</title>
+    <link rel="icon" type="image/png" href="icon.png">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
-        .taskbar { background: #333; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .tabs-container { display: flex; flex-grow: 1; overflow-x: auto; }
-        .tabs { display: flex; }
-        .tab { padding: 10px; background: #444; margin: 5px; border-radius: 5px; cursor: pointer; }
-        .tab.active { background: #555; }
-        .add-tab { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; }
-        .main-content { display: flex; flex-direction: column; align-items: center; padding: 10px; }
-        iframe { width: 90%; height: 400px; margin-top: 10px; border: none; }
-        .auth-container { display: none; flex-direction: column; align-items: center; padding: 10px; }
-        input, button { margin: 5px; padding: 10px; }
+        body { margin: 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        .taskbar, .footer { background: #222; color: white; padding: 10px; text-align: center; }
+        .main-content { display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; }
+        .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
+        .login-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 20px; border-radius: 10px; text-align: center; }
+        input, button { margin: 10px; padding: 10px; width: 80%; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="taskbar">
-        <div class="tabs-container">
-            <div class="tabs" id="tabs">
-                <div class="tab active" id="main-tab">Main</div>
-            </div>
-        </div>
-        <button class="add-tab" onclick="addNewTab()">+</button>
-        <div id="auth-section">
-            <span id="welcome-text"></span>
-            <button id="logout-btn" onclick="logout()" style="display: none;">Logout</button>
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h2 id="authTitle">Login</h2>
+            <input type="text" id="authInput" placeholder="Username or Email"><br>
+            <input type="email" id="emailInput" class="hidden" placeholder="Email"><br>
+            <button onclick="submitAuth()">Submit</button>
+            <p><a href="#" onclick="toggleAuthMode()" id="toggleAuth">Register</a></p>
         </div>
     </div>
-
+    
+    <div class="taskbar">WeatherMajor</div>
     <div class="main-content" id="mainContent">
         <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
         <iframe src="https://battaglia.ddns.net/twc/" title="WeatherStar4000+"></iframe>
     </div>
-
-    <div class="auth-container" id="authContainer">
-        <h2>Login or Register</h2>
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button onclick="login()">Login</button>
-        <button onclick="register()">Register</button>
-    </div>
-
+    <div class="footer">UntitledManifoldGuy ©️ All rights Reserved</div>
+    
     <script>
-        function addNewTab() {
-            let userUrl = prompt("Enter a weather-related URL:");
-            if (!userUrl) return;
-            let tabId = "tab-" + Math.random().toString(36).substr(2, 9);
-            let tab = document.createElement("div");
-            tab.className = "tab";
-            tab.innerHTML = userUrl + ' <span onclick="this.parentElement.remove()">x</span>';
-            document.getElementById("tabs").appendChild(tab);
+        let isRegistering = false;
+
+        function toggleAuthMode() {
+            isRegistering = !isRegistering;
+            document.getElementById('authTitle').innerText = isRegistering ? 'Register' : 'Login';
+            document.getElementById('toggleAuth').innerText = isRegistering ? 'Login' : 'Register';
+            document.getElementById('emailInput').classList.toggle('hidden', !isRegistering);
         }
 
-        function showAuth() {
-            document.getElementById("authContainer").style.display = "flex";
+        function submitAuth() {
+            const userInput = document.getElementById('authInput').value;
+            const emailInput = document.getElementById('emailInput').value;
+
+            if (isRegistering && !emailInput) {
+                alert('Please enter an email to register.');
+                return;
+            }
+
+            if (!userInput) {
+                alert('Please enter a username or email.');
+                return;
+            }
+            
+            localStorage.setItem('loggedIn', 'true');
+            document.getElementById('loginContainer').style.display = 'none';
         }
 
-        function hideAuth() {
-            document.getElementById("authContainer").style.display = "none";
-        }
-
-        function register() {
-            let user = document.getElementById("username").value;
-            let pass = document.getElementById("password").value;
-            if (!user || !pass) return alert("Enter username and password!");
-            if (localStorage.getItem(user)) return alert("User already exists!");
-            localStorage.setItem(user, btoa(pass));
-            alert("Registration successful! Now login.");
-        }
-
-        function login() {
-            let user = document.getElementById("username").value;
-            let pass = document.getElementById("password").value;
-            if (!user || !pass) return alert("Enter username and password!");
-            if (localStorage.getItem(user) === btoa(pass)) {
-                sessionStorage.setItem("loggedInUser", user);
-                checkLogin();
-            } else {
-                alert("Invalid login!");
+        window.onload = function() {
+            if (localStorage.getItem('loggedIn') === 'true') {
+                document.getElementById('loginContainer').style.display = 'none';
             }
         }
-
-        function logout() {
-            sessionStorage.removeItem("loggedInUser");
-            checkLogin();
-        }
-
-        function checkLogin() {
-            let user = sessionStorage.getItem("loggedInUser");
-            if (user) {
-                document.getElementById("authContainer").style.display = "none";
-                document.getElementById("welcome-text").textContent = "Welcome, " + user + "!";
-                document.getElementById("logout-btn").style.display = "inline";
-            } else {
-                document.getElementById("authContainer").style.display = "flex";
-                document.getElementById("welcome-text").textContent = "";
-                document.getElementById("logout-btn").style.display = "none";
-            }
-        }
-
-        checkLogin();
     </script>
 </body>
 </html>
+
 
 
