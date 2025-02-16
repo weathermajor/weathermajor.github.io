@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherMajor</title>
     <link rel="icon" type="image/png" href="icon.png">
@@ -20,12 +21,12 @@
         .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
     </style>
 </head>
-<body data-new-gr-c-s-check-loaded="14.1223.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1223.0">
+<body>
 
     <div class="taskbar">
         <div class="tabs-container">
             <div class="tabs" id="tabs">
-                <div class="tab active" id="main-tab" onclick="switchTab(&#39;main-tab&#39;)">Main</div>
+                <div class="tab active" id="main-tab" onclick="switchTab('main-tab')">Main</div>
             </div>
         </div>
         <button class="add-tab" onclick="addNewTab()">+</button>
@@ -34,7 +35,7 @@
     <!-- Main Content Page -->
     <div class="main-content" id="mainContent">
         <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
-        <iframe src="https://battaglia.ddns.net/twc/" title="WeatherStar4000+"></iframe>
+        <iframe src="https://battaglia.ddns.net/twc/" title="Battaglia TWC"></iframe>
     </div>
 
     <!-- Container for dynamically created iframes -->
@@ -63,13 +64,13 @@
             // Validate if the URL belongs to a weather-related site
             if (isValidWeatherSite(userUrl)) {
                 const domain = extractDomain(userUrl);
-                const tabId = tab-${tabCounter++};
+                const tabId = `tab-${tabCounter++}`;
 
                 // Create new tab element
                 const tabElement = document.createElement("div");
                 tabElement.className = "tab";
                 tabElement.id = tabId;
-                tabElement.innerHTML = ${domain} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>;
+                tabElement.innerHTML = `${domain} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
                 tabElement.onclick = () => switchTab(tabId);
                 
                 document.getElementById("tabs").appendChild(tabElement);
@@ -78,7 +79,7 @@
                 const iframeContainer = document.getElementById("iframeContainer");
                 const iframeElement = document.createElement("iframe");
                 iframeElement.className = "iframe-container";
-                iframeElement.id = ${tabId}-iframe;
+                iframeElement.id = `${tabId}-iframe`;
                 iframeElement.src = userUrl;
                 iframeContainer.appendChild(iframeElement);
 
@@ -138,26 +139,5 @@
         }
     </script>
 
-
-
-</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
-      div.grammarly-desktop-integration {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select:none;
-        user-select:none;
-      }
-
-      div.grammarly-desktop-integration:before {
-        content: attr(data-content);
-      }
-    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
+</body>
+</html>
