@@ -44,100 +44,80 @@
     <div class="footer">UntitledManifoldGuy ©️ All rights Reserved</div>
 
     <script>
-        let tabCounter = 1;
-        let activeTab = "main-tab";
+    let tabCounter = 1;
+    let activeTab = "main-tab";
 
-        const allowedDomains = [
-            "noaa.gov",
-            "weather.gov",
-            "noaaweatherradio.org",
-            "broadcastify.com",
-            "https://weather.gc.ca/canada_e.html"
-        ];
+    const allowedSites = [
+        { name: "NOAA Weather", url: "https://www.noaa.gov" },
+        { name: "National Weather Service", url: "https://www.weather.gov" },
+        { name: "NOAA Weather Radio", url: "https://noaaweatherradio.org" },
+        { name: "Broadcastify", url: "https://www.broadcastify.com" },
+        { name: "Weather Canada", url: "https://weather.gc.ca/canada_e.html" }
+    ];
 
-        function addNewTab() {
-            let userUrl = prompt("Enter a URL for this tab:");
-            if (!userUrl) return;
+    function addNewTab() {
+        let siteOptions = allowedSites.map((site, index) => `${index + 1}. ${site.name}`).join("\n");
+        let choice = prompt(`Select a site by number:\n${siteOptions}`);
 
-            userUrl = ensureHttps(userUrl);
+        if (!choice) return;
 
-            // Validate if the URL belongs to a weather-related site
-            if (isValidWeatherSite(userUrl)) {
-                const domain = extractDomain(userUrl);
-                const tabId = `tab-${tabCounter++}`;
-
-                // Create new tab element
-                const tabElement = document.createElement("div");
-                tabElement.className = "tab";
-                tabElement.id = tabId;
-                tabElement.innerHTML = `${domain} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
-                tabElement.onclick = () => switchTab(tabId);
-                
-                document.getElementById("tabs").appendChild(tabElement);
-
-                // Create iframe for the new tab
-                const iframeContainer = document.getElementById("iframeContainer");
-                const iframeElement = document.createElement("iframe");
-                iframeElement.className = "iframe-container";
-                iframeElement.id = `${tabId}-iframe`;
-                iframeElement.src = userUrl;
-                iframeContainer.appendChild(iframeElement);
-
-                // Switch to the new tab
-                switchTab(tabId);
-            } else {
-                alert("Invalid URL. Only weather-related sites like NOAA, Weather.gov, Broadcastify, etc., are allowed.");
-            }
+        let index = parseInt(choice) - 1;
+        if (index < 0 || index >= allowedSites.length) {
+            alert("Invalid selection.");
+            return;
         }
 
-        function switchTab(tabId) {
-            // Hide main content if switching away from Main tab
-            document.getElementById("mainContent").style.display = tabId === "main-tab" ? "flex" : "none";
+        let selectedSite = allowedSites[index];
+        const tabId = `tab-${tabCounter++}`;
 
-            if (activeTab) {
-                document.getElementById(activeTab).classList.remove("active");
-                let activeIframe = document.getElementById(activeTab + "-iframe");
-                if (activeIframe) activeIframe.style.display = "none";
-            }
+        // Create new tab element
+        const tabElement = document.createElement("div");
+        tabElement.className = "tab";
+        tabElement.id = tabId;
+        tabElement.innerHTML = `${selectedSite.name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
+        tabElement.onclick = () => switchTab(tabId);
+        
+        document.getElementById("tabs").appendChild(tabElement);
 
-            activeTab = tabId;
-            document.getElementById(tabId).classList.add("active");
+        // Create iframe for the new tab
+        const iframeContainer = document.getElementById("iframeContainer");
+        const iframeElement = document.createElement("iframe");
+        iframeElement.className = "iframe-container";
+        iframeElement.id = `${tabId}-iframe`;
+        iframeElement.src = selectedSite.url;
+        iframeContainer.appendChild(iframeElement);
 
-            let iframe = document.getElementById(tabId + "-iframe");
-            if (iframe) iframe.style.display = "block";
+        // Switch to the new tab
+        switchTab(tabId);
+    }
+
+    function switchTab(tabId) {
+        document.getElementById("mainContent").style.display = tabId === "main-tab" ? "flex" : "none";
+
+        if (activeTab) {
+            document.getElementById(activeTab).classList.remove("active");
+            let activeIframe = document.getElementById(activeTab + "-iframe");
+            if (activeIframe) activeIframe.style.display = "none";
         }
 
-        function closeTab(tabId) {
-            document.getElementById(tabId).remove();
-            const iframe = document.getElementById(tabId + "-iframe");
-            if (iframe) iframe.remove();
+        activeTab = tabId;
+        document.getElementById(tabId).classList.add("active");
 
-            // If last tab is closed, return to the main tab
-            if (document.getElementsByClassName("tab").length === 1) {
-                switchTab("main-tab");
-            }
-        }
+        let iframe = document.getElementById(tabId + "-iframe");
+        if (iframe) iframe.style.display = "block";
+    }
 
-        function ensureHttps(url) {
-            if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                // Automatically use https://
-                const httpsUrl = "https://" + url;
-                return httpsUrl;
-            }
-            return url;
-        }
+    function closeTab(tabId) {
+        document.getElementById(tabId).remove();
+        const iframe = document.getElementById(tabId + "-iframe");
+        if (iframe) iframe.remove();
 
-        function extractDomain(url) {
-            let hostname = new URL(url).hostname;
-            return hostname.replace("www.", "");
+        if (document.getElementsByClassName("tab").length === 1) {
+            switchTab("main-tab");
         }
+    }
+</script>
 
-        function isValidWeatherSite(url) {
-            // Extract the domain and check if it matches allowed domains
-            const domain = extractDomain(url);
-            return allowedDomains.some(allowedDomain => domain.includes(allowedDomain));
-        }
-    </script>
 
 </body>
 </html>
