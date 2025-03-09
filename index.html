@@ -12,17 +12,16 @@
         .tabs { display: flex; flex-direction: row; }
         .tab { padding: 5px 10px; margin-right: 5px; cursor: pointer; background: #444; border-radius: 5px; display: inline-block; }
         .tab.active { background: #666; }
-        .add-tab-container { position: relative; }
         .add-tab { cursor: pointer; background: green; color: white; padding: 5px 10px; border-radius: 5px; }
-        .dropdown { display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
-        .dropdown div { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; }
-        .dropdown div:hover { background: #f0f0f0; }
-        .container { display: flex; flex-grow: 1; overflow-x: auto; position: relative; white-space: nowrap; }
-        .iframe-container { border: none; display: none; width: 100vw; height: 100vh; position: absolute; }
+        .container { display: flex; flex-grow: 1; position: relative; }
+        .iframe-container { border: none; display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
         .close-tab { margin-left: 5px; cursor: pointer; color: red; }
         .footer { text-align: center; padding: 10px; background: #222; color: white; }
         .main-content { display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; }
         .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
+        .tab-selection { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 15px; background: white; }
+        .tab-selection button { padding: 15px 20px; font-size: 16px; cursor: pointer; border: none; background: #007BFF; color: white; border-radius: 5px; }
+        .tab-selection button:hover { background: #0056b3; }
     </style>
 </head>
 <body>
@@ -33,11 +32,7 @@
                 <div class="tab active" id="main-tab" onclick="switchTab('main-tab')">Main</div>
             </div>
         </div>
-        
-        <div class="add-tab-container">
-            <button class="add-tab" onclick="toggleDropdown()">+</button>
-            <div class="dropdown" id="domainDropdown"></div>
-        </div>
+        <button class="add-tab" onclick="openTabSelection()">+</button>
     </div>
 
     <!-- Main Content Page -->
@@ -45,6 +40,9 @@
         <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
         <iframe src="https://battaglia.ddns.net/twc/" title="Battaglia TWC"></iframe>
     </div>
+
+    <!-- Tab Selection Page -->
+    <div class="tab-selection" id="tabSelection"></div>
 
     <!-- Container for dynamically created iframes -->
     <div class="container" id="iframeContainer"></div>
@@ -56,28 +54,32 @@
         let activeTab = "main-tab";
 
         const allowedDomains = {
-            "NOAA Weather": "https://www.weather.gov/",
+            "NWS": "https://www.weather.gov/",
             "Broadcastify": "https://www.broadcastify.com/",
             "NOAA Weather Radio": "https://noaaweatherradio.org/",
-            "Canada Weather": "https://weather.gc.ca/canada_e.html"
+            "Canada Weather": "https://weather.gc.ca/canada_e.html",
+            "Weather USA (Radio)": "https://www.weatherusa.net/radio"
         };
 
-        function toggleDropdown() {
-            const dropdown = document.getElementById("domainDropdown");
-            dropdown.innerHTML = ""; // Clear previous content
+        function openTabSelection() {
+            // Hide other content
+            document.getElementById("mainContent").style.display = "none";
+            document.getElementById("iframeContainer").style.display = "none";
 
+            // Show tab selection screen
+            const tabSelection = document.getElementById("tabSelection");
+            tabSelection.innerHTML = "<h2>Select a Tab</h2>";
             Object.entries(allowedDomains).forEach(([name, url]) => {
-                const option = document.createElement("div");
-                option.textContent = name;
-                option.onclick = () => addNewTab(url, name);
-                dropdown.appendChild(option);
+                const button = document.createElement("button");
+                button.textContent = name;
+                button.onclick = () => addNewTab(url, name);
+                tabSelection.appendChild(button);
             });
 
-            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+            tabSelection.style.display = "flex";
         }
 
         function addNewTab(url, name) {
-            toggleDropdown(); // Close dropdown after selection
             const tabId = `tab-${tabCounter++}`;
 
             // Create new tab element
@@ -102,8 +104,10 @@
         }
 
         function switchTab(tabId) {
-            // Hide main content if switching away from Main tab
+            // Hide main content and tab selection screen
             document.getElementById("mainContent").style.display = tabId === "main-tab" ? "flex" : "none";
+            document.getElementById("tabSelection").style.display = "none";
+            document.getElementById("iframeContainer").style.display = "block";
 
             if (activeTab) {
                 document.getElementById(activeTab).classList.remove("active");
