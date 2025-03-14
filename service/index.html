@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherMajor</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        .taskbar { display: flex; align-items: center; background: #222; color: white; padding: 10px; }
+        .tabs-container { flex-grow: 1; overflow-x: auto; white-space: nowrap; }
+        .tabs { display: flex; flex-direction: row; }
+        .tab { padding: 5px 10px; margin-right: 5px; cursor: pointer; background: #444; border-radius: 5px; display: inline-block; }
+        .tab.active { background: #666; }
+        .add-tab { cursor: pointer; background: green; color: white; padding: 5px 10px; border-radius: 5px; }
+        .container { display: flex; flex-grow: 1; position: relative; }
+        .iframe-container { border: none; display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        .close-tab { margin-left: 5px; cursor: pointer; color: red; }
+        .footer { text-align: center; padding: 10px; background: #222; color: white; }
+        .main-content { display: flex; flex-direction: row; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; }
+        .main-content iframe { flex: 1; width: 50%; height: 90%; border: none; }
+        .tab-selection { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 15px; background: white; }
+        .tab-selection button { padding: 15px 20px; font-size: 16px; cursor: pointer; border: none; background: #007BFF; color: white; border-radius: 5px; }
+        .tab-selection button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
 
+    <div class="taskbar">
+        <div class="tabs-container">
+            <div class="tabs" id="tabs">
+                <div class="tab active" id="main-tab" onclick="switchTab('main-tab')">Main</div>
+            </div>
+        </div>
+        <button class="add-tab" onclick="openTabSelection()">+</button>
+    </div>
+
+    <!-- Main Content Page -->
+    <div class="main-content" id="mainContent">
+        <iframe src="https://weather.im/iembot/" title="Weather IM"></iframe>
+        <iframe src="https://battaglia.ddns.net/twc/" title="Battaglia TWC"></iframe>
+    </div>
+
+    <!-- Tab Selection Page -->
+    <div class="tab-selection" id="tabSelection"></div>
+
+    <!-- Container for dynamically created iframes -->
+    <div class="container" id="iframeContainer"></div>
+
+    <div class="footer">UntitledManifoldGuy ©️ All rights Reserved</div>
+
+    <script>
+        let tabCounter = 1;
+        let activeTab = "main-tab";
+
+        const allowedDomains = {
+            "NWS": "https://www.weather.gov/",
+            "Broadcastify": "https://www.broadcastify.com/",
+            "NOAA Weather Radio": "https://noaaweatherradio.org/",
+            "Canada Weather": "https://weather.gc.ca/canada_e.html",
+            "Weather USA (Radio)": "https://www.weatherusa.net/radio"
+        };
+
+        function openTabSelection() {
+            // Hide other content
+            document.getElementById("mainContent").style.display = "none";
+            document.getElementById("iframeContainer").style.display = "none";
+
+            // Show tab selection screen
+            const tabSelection = document.getElementById("tabSelection");
+            tabSelection.innerHTML = "<h2>Select a Tab</h2>";
+            Object.entries(allowedDomains).forEach(([name, url]) => {
+                const button = document.createElement("button");
+                button.textContent = name;
+                button.onclick = () => addNewTab(url, name);
+                tabSelection.appendChild(button);
+            });
+
+            tabSelection.style.display = "flex";
+        }
+
+        function addNewTab(url, name) {
+            const tabId = `tab-${tabCounter++}`;
+
+            // Create new tab element
+            const tabElement = document.createElement("div");
+            tabElement.className = "tab";
+            tabElement.id = tabId;
+            tabElement.innerHTML = `${name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
+            tabElement.onclick = () => switchTab(tabId);
+
+            document.getElementById("tabs").appendChild(tabElement);
+
+            // Create iframe for the new tab
+            const iframeContainer = document.getElementById("iframeContainer");
+            const iframeElement = document.createElement("iframe");
+            iframeElement.className = "iframe-container";
+            iframeElement.id = `${tabId}-iframe`;
+            iframeElement.src = url;
+            iframeContainer.appendChild(iframeElement);
+
+            // Switch to the new tab
+            switchTab(tabId);
+        }
+
+        function switchTab(tabId) {
+            // Hide main content and tab selection screen
+            document.getElementById("mainContent").style.display = tabId === "main-tab" ? "flex" : "none";
+            document.getElementById("tabSelection").style.display = "none";
+            document.getElementById("iframeContainer").style.display = "block";
+
+            if (activeTab) {
+                document.getElementById(activeTab).classList.remove("active");
+                let activeIframe = document.getElementById(activeTab + "-iframe");
+                if (activeIframe) activeIframe.style.display = "none";
+            }
+
+            activeTab = tabId;
+            document.getElementById(tabId).classList.add("active");
+
+            let iframe = document.getElementById(tabId + "-iframe");
+            if (iframe) iframe.style.display = "block";
+        }
+
+        function closeTab(tabId) {
+            document.getElementById(tabId).remove();
+            const iframe = document.getElementById(tabId + "-iframe");
+            if (iframe) iframe.remove();
+
+            // If last tab is closed, return to the main tab
+            if (document.getElementsByClassName("tab").length === 1) {
+                switchTab("main-tab");
+            }
+        }
+    </script>
+
+</body>
+</html>
