@@ -80,13 +80,13 @@
         }
 
         function addNewTab(url, name) {
-            const tabId = tab-${tabCounter++};
+            const tabId = `tab-${tabCounter++}`;
 
             // Create new tab element
             const tabElement = document.createElement("div");
             tabElement.className = "tab";
             tabElement.id = tabId;
-            tabElement.innerHTML = ${name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>;
+            tabElement.innerHTML = `${name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
             tabElement.onclick = () => switchTab(tabId);
 
             document.getElementById("tabs").appendChild(tabElement);
