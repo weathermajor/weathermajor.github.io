@@ -58,8 +58,7 @@
             "Broadcastify": "https://www.broadcastify.com/",
             "NOAA Weather Radio": "https://noaaweatherradio.org/",
             "Canada Weather": "https://weather.gc.ca/canada_e.html",
-            "Weather USA (Radio)": "https://www.weatherusa.net/radio",
-            "Weather Star": "https://weatherstar.netbymatt.com/"
+            "Weather USA (Radio)": "https://www.weatherusa.net/radio"
         };
 
         function openTabSelection() {
@@ -81,13 +80,13 @@
         }
 
         function addNewTab(url, name) {
-            const tabId = `tab-${tabCounter++}`;
+            const tabId = tab-${tabCounter++};
 
             // Create new tab element
             const tabElement = document.createElement("div");
             tabElement.className = "tab";
             tabElement.id = tabId;
-            tabElement.innerHTML = `${name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>`;
+            tabElement.innerHTML = ${name} <span class="close-tab" onclick="closeTab('${tabId}')">x</span>;
             tabElement.onclick = () => switchTab(tabId);
 
             document.getElementById("tabs").appendChild(tabElement);
@@ -96,7 +95,7 @@
             const iframeContainer = document.getElementById("iframeContainer");
             const iframeElement = document.createElement("iframe");
             iframeElement.className = "iframe-container";
-            iframeElement.id = `${tabId}-iframe`;
+            iframeElement.id = ${tabId}-iframe;
             iframeElement.src = url;
             iframeContainer.appendChild(iframeElement);
 
