@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOAA SPC Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .dropdown-container {
+            margin: 20px;
+        }
+        select {
+            padding: 8px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #image-container {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 80%;
+            height: auto;
+            margin: 10px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>NOAA SPC Images</h1>
+
+    <div class="dropdown-container">
+        <label for="year">Year:</label>
+        <select id="year"></select>
+
+        <label for="quarter">Quarter:</label>
+        <select id="quarter">
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
+        </select>
+
+        <label for="month">Month:</label>
+        <select id="month"></select>
+
+        <label for="day">Day:</label>
+        <select id="day"></select>
+
+        <button onclick="loadImages()">Load Images</button>
+    </div>
+
+    <div id="image-container"></div>
+
+    <footer>Weather Major ©️ All rights reserved</footer>
+
+    <script>
+        function populateDropdowns() {
+            const yearSelect = document.getElementById("year");
+            const monthSelect = document.getElementById("month");
+            const daySelect = document.getElementById("day");
+
+            const currentYear = new Date().getFullYear();
+
+            // Populate years (last 5 years)
+            for (let i = currentYear; i >= currentYear - 5; i--) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                yearSelect.appendChild(option);
+            }
+
+            // Populate months (1-12)
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement("option");
+                option.value = String(i).padStart(2, '0');
+                option.textContent = i;
+                monthSelect.appendChild(option);
+            }
+
+            // Populate days (1-31)
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement("option");
+                option.value = String(i).padStart(2, '0');
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+
+            // Set defaults to today’s date
+            yearSelect.value = currentYear;
+            monthSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
+            daySelect.value = String(new Date().getDate()).padStart(2, '0');
+        }
+
+        function loadImages() {
+            const year = document.getElementById("year").value;
+            const quarter = document.getElementById("quarter").value;
+            const month = document.getElementById("month").value;
+            const day = document.getElementById("day").value;
+            const imagePath = `/spc/${year}/${quarter}/${month}/${day}/`;
+
+            const images = ['otlk.gif', 'prob-otlk-torn.gif', 'prob-otlk-wind.gif', 'prob-otlk-hail.gif']; // Update with actual filenames
+
+            const container = document.getElementById("image-container");
+            container.innerHTML = ""; // Clear previous images
+
+            images.forEach(img => {
+                const imgElement = document.createElement("img");
+                imgElement.src = imagePath + img;
+                imgElement.alt = "NOAA SPC Image";
+                container.appendChild(imgElement);
+            });
+        }
+
+        window.onload = populateDropdowns;
+    </script>
+</body>
+</html>
