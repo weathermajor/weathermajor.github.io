@@ -22,6 +22,18 @@
             margin: 5px;
             font-size: 16px;
         }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
         #image-container {
             margin-top: 20px;
         }
@@ -69,6 +81,11 @@
     <footer>Weather Major ©️ All rights reserved</footer>
 
     <script>
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
         function populateDropdowns() {
             const yearSelect = document.getElementById("year");
             const monthSelect = document.getElementById("month");
@@ -84,11 +101,11 @@
                 yearSelect.appendChild(option);
             }
 
-            // Populate months (1-12)
-            for (let i = 1; i <= 12; i++) {
+            // Populate months with names
+            for (let i = 0; i < 12; i++) {
                 const option = document.createElement("option");
-                option.value = String(i).padStart(2, '0');
-                option.textContent = i;
+                option.value = String(i + 1).padStart(2, '0'); // Convert to 2-digit format
+                option.textContent = monthNames[i]; // Display month name
                 monthSelect.appendChild(option);
             }
 
@@ -111,9 +128,9 @@
             const quarter = document.getElementById("quarter").value;
             const month = document.getElementById("month").value;
             const day = document.getElementById("day").value;
-            const imagePath = `/spc/${year}/${quarter}/${month}/${day}/`;
+            const imagePath = `/${year}/${quarter}/${month}/${day}/`;
 
-            const images = ['otlk.gif', 'prob-otlk-torn.gif', 'prob-otlk-wind.gif', 'prob-otlk-hail.gif']; // Update with actual filenames
+            const images = ['image1.gif', 'image2.gif', 'image3.gif']; // Update with actual filenames
 
             const container = document.getElementById("image-container");
             container.innerHTML = ""; // Clear previous images
