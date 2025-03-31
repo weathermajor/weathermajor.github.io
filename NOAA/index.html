@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOAA SPC Images</title>
+    <title>NOAA SPC Outlooks</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,14 +53,14 @@
     </style>
 </head>
 <body>
-    <h1>NOAA SPC Images</h1>
+    <h1>NOAA SPC Outlooks</h1>
 
     <div class="dropdown-container">
         <label for="year">Year:</label>
         <select id="year"></select>
 
         <label for="quarter">Quarter:</label>
-        <select id="quarter">
+        <select id="quarter" onchange="updateMonths()">
             <option value="Q1">Q1</option>
             <option value="Q2">Q2</option>
             <option value="Q3">Q3</option>
@@ -73,7 +73,7 @@
         <label for="day">Day:</label>
         <select id="day"></select>
 
-        <button onclick="loadImages()">Load Images</button>
+        <button onclick="loadImages()">Load Outlooks</button>
     </div>
 
     <div id="image-container"></div>
@@ -86,9 +86,15 @@
             "July", "August", "September", "October", "November", "December"
         ];
 
+        const quarterMonths = {
+            "Q1": ["01", "02", "03"], // Jan, Feb, Mar
+            "Q2": ["04", "05", "06"], // Apr, May, Jun
+            "Q3": ["07", "08", "09"], // Jul, Aug, Sep
+            "Q4": ["10", "11", "12"], // Oct, Nov, Dec
+        };
+
         function populateDropdowns() {
             const yearSelect = document.getElementById("year");
-            const monthSelect = document.getElementById("month");
             const daySelect = document.getElementById("day");
 
             const currentYear = new Date().getFullYear();
@@ -101,14 +107,6 @@
                 yearSelect.appendChild(option);
             }
 
-            // Populate months with names
-            for (let i = 0; i < 12; i++) {
-                const option = document.createElement("option");
-                option.value = String(i + 1).padStart(2, '0'); // Convert to 2-digit format
-                option.textContent = monthNames[i]; // Display month name
-                monthSelect.appendChild(option);
-            }
-
             // Populate days (1-31)
             for (let i = 1; i <= 31; i++) {
                 const option = document.createElement("option");
@@ -119,8 +117,29 @@
 
             // Set defaults to today’s date
             yearSelect.value = currentYear;
-            monthSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
             daySelect.value = String(new Date().getDate()).padStart(2, '0');
+
+            updateMonths(); // Initialize months based on default quarter
+        }
+
+        function updateMonths() {
+            const quarter = document.getElementById("quarter").value;
+            const monthSelect = document.getElementById("month");
+
+            // Clear current month options
+            monthSelect.innerHTML = "";
+
+            // Get months for the selected quarter
+            const months = quarterMonths[quarter];
+            months.forEach(month => {
+                const option = document.createElement("option");
+                option.value = month;
+                option.textContent = monthNames[parseInt(month) - 1]; // Convert month to name
+                monthSelect.appendChild(option);
+            });
+
+            // Set default to the first month of the selected quarter
+            monthSelect.value = months[0];
         }
 
         function loadImages() {
@@ -128,9 +147,15 @@
             const quarter = document.getElementById("quarter").value;
             const month = document.getElementById("month").value;
             const day = document.getElementById("day").value;
-            const imagePath = `/spc/${year}/${quarter}/${month}/${day}/`;
+            const imagePath = `/NOAA/SPC/${year}/${quarter}/${month}/${day}/`;
 
-            const images = ['image1.gif', 'image2.gif', 'image3.gif']; // Update with actual filenames
+            // List of images to load
+            const images = [
+                'otlk.gif',
+                'prob-otlk-hail.gif',
+                'prob-otlk-torn.gif',
+                'prob-otlk-wind.gif'
+            ];
 
             const container = document.getElementById("image-container");
             container.innerHTML = ""; // Clear previous images
@@ -138,7 +163,7 @@
             images.forEach(img => {
                 const imgElement = document.createElement("img");
                 imgElement.src = imagePath + img;
-                imgElement.alt = "NOAA SPC Image";
+                imgElement.alt = "NOAA SPC Outlook";
                 container.appendChild(imgElement);
             });
         }
