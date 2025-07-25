@@ -1,0 +1,46 @@
+End User License Agreement (EULA) for WeatherMajor
+
+Last updated: July 25, 2025
+
+Please read this End User License Agreement ("Agreement") carefully before using the WeatherMajor software ("Software") provided by [Your Name or Company Name] ("Developer", "we", "our", or "us").
+
+By accessing or using the Software, you agree to be bound by the terms of this Agreement. If you do not agree with these terms, you may not use the Software.
+
+1. License Grant
+We grant you a limited, non-exclusive, non-transferable, revocable license to use the Software for personal and non-commercial purposes, subject to the terms of this Agreement.
+
+2. Restrictions
+You may not:
+
+- Redistribute, sublicense, or republish the full source code of WeatherMajor.
+- Copy and reuse substantial portions of the Software’s code in your own projects.
+- Use the Software for any unlawful or unauthorized purpose.
+- Reverse engineer, decompile, or disassemble the Software, except as expressly permitted by applicable law.
+- Claim authorship or full ownership of the Software or any of its core components.
+
+You may:
+
+- Use limited portions of the code (e.g., small functions or snippets) in your own projects, provided your project is substantially original.
+- Credit the Developer where appropriate.
+
+3. Intellectual Property
+All rights, title, and interest in and to the Software, including intellectual property rights, remain the exclusive property of the Developer.
+
+4. No Warranty
+The Software is provided “as is,” without any warranties or guarantees of any kind. We make no guarantees that the Software will be accurate, uninterrupted, or error-free.
+
+5. Limitation of Liability
+To the fullest extent permitted by law, the Developer shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from the use or inability to use the Software.
+
+You agree that you may not bring legal claims against the Developer for issues arising from your use of the Software.
+
+6. Termination
+We reserve the right to revoke your access and license at any time if you violate the terms of this Agreement.
+
+7. Updates and Changes
+We may update this EULA from time to time. Continued use of the Software after any changes constitutes your acceptance of the updated Agreement.
+
+8. Governing Law
+This Agreement shall be governed by and interpreted in accordance with the laws of your local jurisdiction, without regard to conflict of law principles.
+
+EULA ver: 1.0
