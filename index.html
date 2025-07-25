@@ -43,28 +43,52 @@
     .eula-box {
       background: white;
       padding: 20px;
-      max-width: 600px;
+      max-width: 700px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      white-space: pre-wrap;
-      max-height: 80vh;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
-    .eula-box h2 {
-      margin-top: 0;
+    .eula-content {
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: scroll;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      margin-bottom: 10px;
+    }
+    .eula-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .eula-actions label {
+      font-size: 14px;
+    }
+    #continue-btn {
+      background-color: #4CAF50;
+    }
+    #continue-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
+  <!-- EULA Modal -->
   <div id="eula-modal">
     <div class="eula-box">
       <h2>End User License Agreement</h2>
-      <div id="eula-content">Loading EULA...</div>
-      <br>
-      <button onclick="acceptEULA()">I Agree</button>
+      <div id="eula-content" class="eula-content">Loading EULA...</div>
+      <div class="eula-actions">
+        <label><input type="checkbox" id="accept-checkbox"> I accept the terms</label>
+        <button id="continue-btn" disabled>Continue</button>
+      </div>
     </div>
   </div>
 
+  <!-- Main Site Content -->
   <div class="container">
     <h1>WeatherMajor - IEMBot Web Monitor and WeatherStar4000+</h1>
     <h2>IEMBot</h2>
@@ -77,6 +101,7 @@
     <button id="go-btn" disabled>Go to WeatherMajor</button>
   </div>
 
+  <!-- JavaScript for EULA Logic -->
   <script>
     let currentEulaVersion = "";
 
@@ -95,12 +120,6 @@
         if (c.indexOf(cname) === 0) return c.substring(cname.length, c.length);
       }
       return "";
-    }
-
-    function acceptEULA() {
-      setCookie("weathermajor_eula", currentEulaVersion, 365);
-      document.getElementById("eula-modal").style.display = "none";
-      document.getElementById("go-btn").disabled = false;
     }
 
     async function loadEULA() {
@@ -125,7 +144,17 @@
       }
     }
 
-    document.getElementById("go-btn").addEventListener("click", () => {
+    document.getElementById("accept-checkbox").addEventListener("change", function() {
+      document.getElementById("continue-btn").disabled = !this.checked;
+    });
+
+    document.getElementById("continue-btn").addEventListener("click", function() {
+      setCookie("weathermajor_eula", currentEulaVersion, 365);
+      document.getElementById("eula-modal").style.display = "none";
+      document.getElementById("go-btn").disabled = false;
+    });
+
+    document.getElementById("go-btn").addEventListener("click", function() {
       window.location.href = "/service";
     });
 
