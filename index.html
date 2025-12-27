@@ -1,164 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" type="image/png" href="icon.png" />
-  <title>WeatherMajor Info</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Redirect</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      padding: 20px;
-    }
-    .container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      position: relative;
-    }
-    h1 { color: #333; }
-    p { margin-bottom: 15px; }
-    button {
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #eula-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    .eula-box {
-      background: white;
-      padding: 20px;
-      max-width: 700px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      background-color: #f9f9f9;
+      color: #333;
       display: flex;
       flex-direction: column;
-    }
-    .eula-content {
-      white-space: pre-wrap;
-      max-height: 300px;
-      overflow-y: scroll;
-      padding: 15px;
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-      margin-bottom: 10px;
-    }
-    .eula-actions {
-      display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
     }
-    .eula-actions label {
-      font-size: 14px;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
-    #continue-btn {
-      background-color: #4CAF50;
+    p {
+      font-size: 1.2rem;
     }
-    #continue-btn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+    a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <!-- EULA Modal -->
-  <div id="eula-modal">
-    <div class="eula-box">
-      <h2>End User License Agreement (EULA) for WeatherMajor</h2>
-      <div id="eula-content" class="eula-content">Loading EULA...</div>
-      <div class="eula-actions">
-        <label><input type="checkbox" id="accept-checkbox"> I accept the terms</label>
-        <button id="continue-btn" disabled>Continue</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Site Content -->
-  <div class="container">
-    <h1>WeatherMajor - IEMBot Web Monitor and WeatherStar4000+</h1>
-    <h2>IEMBot</h2>
-    <p>The WeatherMajor service provides real-time weather monitoring through IEMBot. It allows users to track weather messages organized by the NWS Office.</p>
-    <p>This service includes various tools such as the VTEC Product Browser, SPC Watch Overviews, River Summary App, and Local Storm Report Mapping.</p>
-    <h2>WeatherStar4000+</h2>
-    <p>WeatherStar4000+ (WS+) is a program by Michael Battaglia! The program is based on WeatherStar4000 (WS) by taiganet.com.</p>
-    <p>The web-based version of WS is still great, with mostly the same options as WS.</p>
-    <p>Click the button below to access WeatherMajor:</p>
-    <button id="go-btn" disabled>Go to WeatherMajor</button>
-  </div>
-
-  <!-- JavaScript for EULA Logic -->
-  <script>
-    let currentEulaVersion = "";
-
-    function setCookie(name, value, days) {
-      const d = new Date();
-      d.setTime(d.getTime() + (days*24*60*60*1000));
-      document.cookie = `${name}=${value}; expires=${d.toUTCString()}; path=/`;
-    }
-
-    function getCookie(name) {
-      const cname = name + "=";
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const ca = decodedCookie.split(';');
-      for (let c of ca) {
-        c = c.trim();
-        if (c.indexOf(cname) === 0) return c.substring(cname.length, c.length);
-      }
-      return "";
-    }
-
-    async function loadEULA() {
-      try {
-        const res = await fetch("eula.txt");
-        const text = await res.text();
-        const lines = text.trim().split("\n");
-        const versionLine = lines.find(line => line.toLowerCase().includes("eula ver"));
-        const versionMatch = versionLine?.match(/EULA ver:\s*([0-9.]+)/i);
-        currentEulaVersion = versionMatch ? versionMatch[1] : "unknown";
-
-        const savedVersion = getCookie("weathermajor_eula");
-        if (savedVersion === currentEulaVersion) {
-          document.getElementById("go-btn").disabled = false;
-        } else {
-          document.getElementById("eula-content").textContent = text;
-          document.getElementById("eula-modal").style.display = "flex";
-        }
-      } catch (err) {
-        document.getElementById("eula-content").textContent = "Failed to load EULA.";
-        console.error("EULA fetch failed:", err);
-      }
-    }
-
-    document.getElementById("accept-checkbox").addEventListener("change", function() {
-      document.getElementById("continue-btn").disabled = !this.checked;
-    });
-
-    document.getElementById("continue-btn").addEventListener("click", function() {
-      setCookie("weathermajor_eula", currentEulaVersion, 365);
-      document.getElementById("eula-modal").style.display = "none";
-      document.getElementById("go-btn").disabled = false;
-    });
-
-    document.getElementById("go-btn").addEventListener("click", function() {
-      window.location.href = "/service";
-    });
-
-    window.onload = loadEULA;
-  </script>
+  <h1>This domain is no longer in use</h1>
+  <p>Please visit our new site: <a href="https://weathermajor.untitledmanifoldguy.com">weathermajor.untitledmanifoldguy.com</a></p>
 </body>
 </html>
