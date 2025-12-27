@@ -1,174 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOAA SPC Outlooks</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        .dropdown-container {
-            margin: 20px;
-        }
-        select {
-            padding: 8px;
-            margin: 5px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #image-container {
-            margin-top: 20px;
-        }
-        img {
-            max-width: 80%;
-            height: auto;
-            margin: 10px;
-            border: 2px solid #333;
-            border-radius: 8px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        footer {
-            margin-top: 30px;
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Redirect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+    a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <h1>NOAA SPC Outlooks</h1>
-
-    <div class="dropdown-container">
-        <label for="year">Year:</label>
-        <select id="year"></select>
-
-        <label for="quarter">Quarter:</label>
-        <select id="quarter" onchange="updateMonths()">
-            <option value="Q1">Q1</option>
-            <option value="Q2">Q2</option>
-            <option value="Q3">Q3</option>
-            <option value="Q4">Q4</option>
-        </select>
-
-        <label for="month">Month:</label>
-        <select id="month"></select>
-
-        <label for="day">Day:</label>
-        <select id="day"></select>
-
-        <button onclick="loadImages()">Load Outlooks</button>
-    </div>
-
-    <div id="image-container"></div>
-
-    <footer>Weather Major ©️ All rights reserved</footer>
-
-    <script>
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-
-        const quarterMonths = {
-            "Q1": ["01", "02", "03"], // Jan, Feb, Mar
-            "Q2": ["04", "05", "06"], // Apr, May, Jun
-            "Q3": ["07", "08", "09"], // Jul, Aug, Sep
-            "Q4": ["10", "11", "12"], // Oct, Nov, Dec
-        };
-
-        function populateDropdowns() {
-            const yearSelect = document.getElementById("year");
-            const daySelect = document.getElementById("day");
-
-            const currentYear = new Date().getFullYear();
-
-            // Populate years (last 5 years)
-            for (let i = currentYear; i >= currentYear - 5; i--) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = i;
-                yearSelect.appendChild(option);
-            }
-
-            // Populate days (1-31)
-            for (let i = 1; i <= 31; i++) {
-                const option = document.createElement("option");
-                option.value = String(i).padStart(2, '0');
-                option.textContent = i;
-                daySelect.appendChild(option);
-            }
-
-            // Set defaults to today’s date
-            yearSelect.value = currentYear;
-            daySelect.value = String(new Date().getDate()).padStart(2, '0');
-
-            updateMonths(); // Initialize months based on default quarter
-        }
-
-        function updateMonths() {
-            const quarter = document.getElementById("quarter").value;
-            const monthSelect = document.getElementById("month");
-
-            // Clear current month options
-            monthSelect.innerHTML = "";
-
-            // Get months for the selected quarter
-            const months = quarterMonths[quarter];
-            months.forEach(month => {
-                const option = document.createElement("option");
-                option.value = month;
-                option.textContent = monthNames[parseInt(month) - 1]; // Convert month to name
-                monthSelect.appendChild(option);
-            });
-
-            // Set default to the first month of the selected quarter
-            monthSelect.value = months[0];
-        }
-
-        function loadImages() {
-            const year = document.getElementById("year").value;
-            const quarter = document.getElementById("quarter").value;
-            const month = document.getElementById("month").value;
-            const day = document.getElementById("day").value;
-            const imagePath = `/NOAA/SPC/${year}/${quarter}/${month}/${day}/`;
-
-            // List of images to load
-            const images = [
-                'otlk.gif',
-                'prob-otlk-hail.gif',
-                'prob-otlk-torn.gif',
-                'prob-otlk-wind.gif'
-            ];
-
-            const container = document.getElementById("image-container");
-            container.innerHTML = ""; // Clear previous images
-
-            images.forEach(img => {
-                const imgElement = document.createElement("img");
-                imgElement.src = imagePath + img;
-                imgElement.alt = "NOAA SPC Outlook";
-                container.appendChild(imgElement);
-            });
-        }
-
-        window.onload = populateDropdowns;
-    </script>
+  <h1>This domain is no longer in use</h1>
+  <p>Please visit our new site: <a href="https://weathermajor.untitledmanifoldguy.com">weathermajor.untitledmanifoldguy.com</a></p>
 </body>
 </html>
